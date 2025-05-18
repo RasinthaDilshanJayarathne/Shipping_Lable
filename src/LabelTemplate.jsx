@@ -71,11 +71,32 @@ const LabelTemplate = () => {
     );
   };
 
+  // const downloadPDF = () => {
+  //   html2canvas(previewRef.current, { scale: 2 }).then((canvas) => {
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const pdf = new jsPDF("landscape", "pt", [canvas.width, canvas.height]);
+  //     pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+  //     pdf.save("label.pdf");
+  //   });
+  // };
+
   const downloadPDF = () => {
+    const A4_WIDTH = 841.89; // points (landscape)
+    const A4_HEIGHT = 595.28;
+
     html2canvas(previewRef.current, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("landscape", "pt", [canvas.width, canvas.height]);
-      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+
+      const pdf = new jsPDF("landscape", "pt", [A4_WIDTH, A4_HEIGHT]);
+
+      // Calculate image dimensions to fit in A4 while maintaining aspect ratio
+      const ratio = Math.min(A4_WIDTH / canvas.width, A4_HEIGHT / canvas.height);
+      const imgWidth = canvas.width * ratio;
+      const imgHeight = canvas.height * ratio;
+      const x = (A4_WIDTH - imgWidth) / 2;
+      const y = (A4_HEIGHT - imgHeight) / 2;
+
+      pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
       pdf.save("label.pdf");
     });
   };
@@ -278,7 +299,19 @@ const LabelTemplate = () => {
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <p>
+            Copyright &copy;
+            <script>document.write(new Date().getFullYear());</script> All rights reserved | Designed &
+            Developed <i class="icon-heart color-danger" aria-hidden="true"></i> by <a
+              href="https://codespherelabs.vercel.app/" target="_blank">Codesphere Labs</a>
+          </p>
+        </div>
+      </div>
     </div>
+
+
   );
 };
 
